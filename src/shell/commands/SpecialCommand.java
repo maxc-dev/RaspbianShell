@@ -1,11 +1,11 @@
-package shell;
+package shell.commands;
 
 import java.io.IOException;
 
 public abstract class SpecialCommand {
 	private static final String ERROR_PARAM = "Invalid parameters for command: [%s] Try <cmd>-help for help with a special command.";
 	
-	private String command = null;
+	private String command;
 	
 	public SpecialCommand(String command) {
 		this.command = command;

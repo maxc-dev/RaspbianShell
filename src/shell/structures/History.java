@@ -1,4 +1,4 @@
-package shell;
+package shell.structures;
 
 import java.util.ArrayList;
 
@@ -10,7 +10,7 @@ public class History extends ArrayList<String> {
 		if (index == 0) {
 			return null;
 		}
-		StringBuffer history = new StringBuffer();
+		StringBuilder history = new StringBuilder();
 		for (String item : this) {
 			history.append(index-1);
 			history.append(" ");

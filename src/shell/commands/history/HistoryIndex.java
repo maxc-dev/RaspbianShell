@@ -1,8 +1,12 @@
-package shell;
+package shell.commands.history;
+
+import shell.commands.SpecialCommand;
+import shell.process.Executioner;
+import shell.structures.History;
 
 public class HistoryIndex extends SpecialCommand {
-	private History history = null;
-	private Executioner executioner = null;
+	private History history;
+	private Executioner executioner;
 	
 	public HistoryIndex(History history, Executioner executioner) {
 		super("!");
@@ -16,11 +20,9 @@ public class HistoryIndex extends SpecialCommand {
 			super.throwInvalidParams();
 			return;
 		}
-		String strIndex = params[0].substring(1, params[0].length());
+		String strIndex = params[0].substring(1);
 		int index = Integer.parseInt(strIndex);
-		System.out.println("debug: " + index);
 		String command = this.history.getCommandAt(index);
-		System.out.println("debug: " + command);
 		if (command != null) {
 			if (!command.startsWith(super.getCommand())) {
 				executioner.execute(command);

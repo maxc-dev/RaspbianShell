@@ -1,10 +1,13 @@
-package shell;
+package shell.commands.dir;
 
 import java.io.File;
 
+import shell.commands.SpecialCommand;
+
 
 public class CurrentDirectory extends SpecialCommand {
-	private ProcessBuilder processBuilder = null;
+	private static final String USER_DIRECTORY = "user.dir";
+	private ProcessBuilder processBuilder;
 	
 	public CurrentDirectory(ProcessBuilder processBuilder) {
 		super("cd");
@@ -14,7 +17,7 @@ public class CurrentDirectory extends SpecialCommand {
 	@Override
 	public void execute(String[] params) {
 		if (params.length == 1) {
-			processBuilder.directory(new File(System.getProperty("user.dir")));
+			processBuilder.directory(new File(System.getProperty(USER_DIRECTORY)));
 		} else if (params.length == 2) {
 			processBuilder.directory(new File(params[1]));
 		} else {

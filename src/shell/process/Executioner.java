@@ -1,12 +1,20 @@
-package shell;
+package shell.process;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import shell.structures.History;
+import shell.commands.SpecialCommand;
+
 public class Executioner {
+	private static final String SHELL_INPUT = "-> ";
+	private static final String REGEX_COMMAND_SPACE = " ";
+	private static final String SHELL_IO_OUTPUT = "I/O-> \n";
+
 	private ProcessBuilder pBuilder = null;
 	private History history = null;
 	private Decoder decoder = null;
@@ -18,23 +26,22 @@ public class Executioner {
 		history = new History();
 		decoder = new Decoder(this, history, pBuilder);
 
-		// we break out with <control><C>
-		while (true) {
-			// read what they entered
-			System.out.print("jsh>");
-			commandLine = console.readLine();
+		do {
+			//collect input
+			System.out.print(SHELL_INPUT);
+			commandLine = console.readLine().trim();
 
-			// if they entered a return, just loop again
-			if (commandLine.equals("")) 
+			//basic validation
+			if (commandLine.isBlank())
 				continue;
 
 			execute(commandLine);
-	 	}
+		} while (true);
 	}
 
 	public void execute(String instruction) {
 		history.add(instruction);
-		String[] params = instruction.split(" ");
+		String[] params = instruction.split(REGEX_COMMAND_SPACE);
 		
 		SpecialCommand command = decoder.isSpecialCommand(params[0]);
 		if (command != null) {
@@ -42,25 +49,23 @@ public class Executioner {
 			return;
 		}
 		
-		List<String> commands = new ArrayList<String>();
-		for (String param : params) {
-			commands.add(param);
-		}
+		List<String> commands = new ArrayList<>();
+		Collections.addAll(commands, params);
 		
 		try {
 			pBuilder.command(commands);
 			Process process = pBuilder.start();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			
-			StringBuffer sBuilder = new StringBuffer();
-			String line = null;
+			StringBuilder sBuilder = new StringBuilder();
+			String line;
 			
 			while ((line = reader.readLine()) != null) {
 				sBuilder.append(line);
 				sBuilder.append(System.getProperty("line.separator"));
 			}
 			String result = sBuilder.toString();
-			System.out.println("I/O:\n" + result);
+			System.out.println(SHELL_IO_OUTPUT + result);
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
